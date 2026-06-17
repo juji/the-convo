@@ -1,63 +1,41 @@
-import Image from "next/image";
+import convo from "./_data/convo.json";
+import { Turn } from "./_components/turn";
+
+type Turn = { speaker: "You" | "ChatGPT"; text: string };
+type Convo = { topic: string; turns: Turn[] };
+
+const { topic, turns } = convo as Convo;
+const assistantTurns = turns.filter((t) => t.speaker === "ChatGPT").length;
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex flex-1 flex-col">
+      <header className="mx-auto w-full max-w-2xl px-4 pt-16 pb-10 sm:pt-24">
+        <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-500" />
+          A conversation
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <h1 className="mt-3 bg-gradient-to-br from-white via-zinc-200 to-zinc-500 bg-clip-text text-4xl font-semibold leading-tight tracking-tight text-transparent sm:text-5xl">
+          {topic}
+        </h1>
+        <p className="mt-4 max-w-prose text-sm text-zinc-400">
+          {turns.length} turns · {assistantTurns} from ChatGPT · between a
+          human and a model.
+        </p>
+        <div className="mt-8 h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+      </header>
+
+      <main className="mx-auto w-full max-w-2xl flex-1 px-4 pb-32">
+        <div className="flex flex-col gap-8 sm:gap-10">
+          {turns.map((turn, i) => (
+            <Turn key={`${turn.speaker}-${i}`} turn={turn} />
+          ))}
+        </div>
+
+        <div className="mt-16 flex items-center justify-center gap-2 text-xs text-zinc-600">
+          <span className="inline-block h-px w-12 bg-zinc-800" />
+          end of conversation
+          <span className="inline-block h-px w-12 bg-zinc-800" />
         </div>
       </main>
     </div>
