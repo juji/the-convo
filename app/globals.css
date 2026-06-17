@@ -22,6 +22,10 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  font-size: 110%;
+}
+
 html,
 body {
   background: var(--background);
@@ -61,7 +65,7 @@ body {
 .prose-chat {
   color: var(--foreground);
   line-height: 1.65;
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 .prose-chat > * + * {
   margin-top: 0.75em;
