@@ -16,7 +16,7 @@ export default function Home() {
           A conversation
         </div>
         <h1 className="mt-3 bg-gradient-to-br from-white via-zinc-200 to-zinc-500 bg-clip-text text-4xl font-semibold leading-tight tracking-tight text-transparent sm:text-5xl">
-          {topic}
+          The Architecture of Presence
         </h1>
         <p className="mt-4 max-w-prose text-sm text-zinc-400">
           {turns.length} turns · {assistantTurns} from ChatGPT · between a
