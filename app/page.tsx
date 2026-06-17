@@ -23,7 +23,7 @@ export default function Home() {
           human and a model.
         </p>
         <div className="mt-8 h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-        <div className="mt-4 text-lg">
+        <div className="mt-4 text-base">
           <span className="text-zinc-400">Original: </span>
           <a href="https://chatgpt.com/share/6a32db88-d084-83ec-940f-86c51f45dbfc" className="text-white hover:underline" target="_blank" rel="noopener noreferrer">
             https://chatgpt.com/share/6a32db88-d084-83ec-940f-86c51f45dbfc
