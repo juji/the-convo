@@ -26,7 +26,7 @@ export default function Home() {
         <div className="mt-4 text-base">
           <span className="text-zinc-400">Original: </span>
           <a href="https://chatgpt.com/share/6a32db88-d084-83ec-940f-86c51f45dbfc" className="text-white hover:underline" target="_blank" rel="noopener noreferrer">
-            https://chatgpt.com/share/6a32db88-d084-83ec-940f-86c51f45dbfc
+            https://chatgpt.com/share/6a32...dbc51f45dbfc
           </a>
         </div>
       </header>
