@@ -4,7 +4,7 @@ import { Turn } from "./_components/turn";
 type Turn = { speaker: "You" | "ChatGPT"; text: string };
 type Convo = { topic: string; turns: Turn[] };
 
-const { topic, turns } = convo as Convo;
+const { turns } = convo as Convo;
 const assistantTurns = turns.filter((t) => t.speaker === "ChatGPT").length;
 
 export default function Home() {
