@@ -16,13 +16,16 @@ export default function Home() {
           A conversation
         </div>
         <h1 className="mt-3 bg-gradient-to-br from-white via-zinc-200 to-zinc-500 bg-clip-text text-4xl font-semibold leading-tight tracking-tight text-transparent sm:text-5xl">
-          The Architecture of Presence
+          What If the Tank Wakes Up Tomorrow?
         </h1>
         <p className="mt-4 max-w-prose text-sm text-zinc-400">
           {turns.length} turns · {assistantTurns} from ChatGPT · between a
           human and a model.
         </p>
         <div className="mt-8 h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+        <a href="https://chatgpt.com/share/6a32db88-d084-83ec-940f-86c51f45dbfc" className="mt-4 text-xs text-zinc-500 hover:underline" target="_blank" rel="noopener noreferrer">
+          view original conversation
+        </a>
       </header>
 
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 pb-32">
