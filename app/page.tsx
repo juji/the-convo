@@ -1,16 +1,22 @@
+"use client";
+
+import { useState } from "react";
 import convo from "./_data/convo-html.json";
 import { Turn } from "./_components/turn";
 import { PlayButton } from "./_components/play-button";
 
-type Turn =
+type TurnType =
   | { speaker: "You"; text: string }
   | { speaker: "ChatGPT"; html: string };
-type Convo = { topic: string; turns: Turn[] };
+type Convo = { topic: string; turns: TurnType[] };
 
 const { turns } = convo as Convo;
 const assistantTurns = turns.filter((t) => t.speaker === "ChatGPT").length;
 
 export default function Home() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(-1);
+
   return (
     <div className="flex flex-1 flex-col">
       <header className="mx-auto w-full max-w-2xl px-4 pt-16 pb-10 sm:pt-24">
@@ -40,7 +46,11 @@ export default function Home() {
             </div>
           </div>
           <div className="flex-shrink-0">
-            <PlayButton turns={turns} />
+            <PlayButton 
+              turns={turns} 
+              onIndexChange={setCurrentIndex} 
+              onPlayingChange={setIsPlaying}
+            />
           </div>
         </div>
 
@@ -50,7 +60,12 @@ export default function Home() {
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 pb-32">
         <div className="flex flex-col gap-8 sm:gap-10">
           {turns.map((turn, i) => (
-            <Turn key={`${turn.speaker}-${i}`} turn={turn} />
+            <div id={`turn-${i}`} key={`${turn.speaker}-${i}`} className="scroll-mt-32 transition-opacity duration-500">
+              <Turn 
+                turn={turn} 
+                isActive={!isPlaying || currentIndex === i} 
+              />
+            </div>
           ))}
         </div>
 

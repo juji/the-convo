@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 type Turn =
   | { speaker: "You"; text: string }
@@ -8,24 +8,49 @@ type Turn =
 
 interface PlayButtonProps {
   turns: Turn[];
+  onIndexChange?: (index: number) => void;
+  onPlayingChange?: (isPlaying: boolean) => void;
 }
 
-export function PlayButton({ turns }: PlayButtonProps) {
+export function PlayButton({ turns, onIndexChange, onPlayingChange }: PlayButtonProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const isPlayingRef = useRef(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+    onPlayingChange?.(isPlaying);
+  }, [isPlaying, onPlayingChange]);
+
+  useEffect(() => {
+    onIndexChange?.(currentIndex);
+    if (currentIndex !== -1) {
+      const el = document.getElementById(`turn-${currentIndex}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  }, [currentIndex, onIndexChange]);
 
   useEffect(() => {
     const loadVoices = () => {
       const availableVoices = window.speechSynthesis.getVoices();
-      setVoices(availableVoices);
+      if (availableVoices.length > 0) {
+        setVoices(availableVoices);
+      }
     };
 
     loadVoices();
-    window.speechSynthesis.onvoiceschanged = loadVoices;
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
     
     return () => {
       window.speechSynthesis.cancel();
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
 
@@ -36,62 +61,78 @@ export function PlayButton({ turns }: PlayButtonProps) {
   };
 
   const stop = useCallback(() => {
+    isPlayingRef.current = false;
     window.speechSynthesis.cancel();
+    if (timerRef.current) clearTimeout(timerRef.current);
     setIsPlaying(false);
     setCurrentIndex(-1);
   }, []);
 
   const play = useCallback(() => {
-    if (turns.length === 0) return;
+    if (turns.length === 0 || voices.length === 0) return;
     
+    // Cancel any existing speech just in case
+    window.speechSynthesis.cancel();
+    if (timerRef.current) clearTimeout(timerRef.current);
+
+    isPlayingRef.current = true;
     setIsPlaying(true);
     let index = 0;
 
+    const englishVoices = voices.filter(v => v.lang.startsWith("en"));
+    
+    const chatgptVoice = englishVoices.find(v => 
+      /female|samantha|victoria|zira|jessica|monica|siri|google us english|en-us-x-sfg#female/i.test(v.name)
+    ) || englishVoices[0];
+
+    const youVoice = englishVoices.find(v => 
+      (/male|daniel|alex|david|guy|sergei|google uk english male|en-gb-x-rjs#male/i.test(v.name)) && v !== chatgptVoice
+    ) || (englishVoices.length > 1 ? englishVoices.find(v => v !== chatgptVoice) : englishVoices[0]);
+
     const speakNext = () => {
-      if (index >= turns.length) {
+      if (!isPlayingRef.current || index >= turns.length) {
         setIsPlaying(false);
         setCurrentIndex(-1);
+        isPlayingRef.current = false;
+        return;
+      }
+
+      const turn = turns[index];
+      const textToSpeak = turn.speaker === "You" ? turn.text : (turn.text || stripHtml(turn.html));
+      
+      // Skip empty turns
+      if (!textToSpeak.trim()) {
+        index++;
+        speakNext();
         return;
       }
 
       setCurrentIndex(index);
-      const turn = turns[index];
-      const textToSpeak = turn.speaker === "You" ? turn.text : stripHtml(turn.html);
-      
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      
-      const preferredVoices = voices.filter(v => v.lang.startsWith("en"));
+      utteranceRef.current = utterance;
       
       if (turn.speaker === "ChatGPT") {
-        const femaleVoice = preferredVoices.find(v => 
-          v.name.toLowerCase().includes("female") || 
-          v.name.toLowerCase().includes("samantha") || 
-          v.name.toLowerCase().includes("victoria") ||
-          v.name.toLowerCase().includes("google us english")
-        );
-        if (femaleVoice) utterance.voice = femaleVoice;
+        if (chatgptVoice) utterance.voice = chatgptVoice;
         utterance.pitch = 1.05;
-        utterance.rate = 1.0;
+        utterance.rate = 1.05;
       } else {
-        const maleVoice = preferredVoices.find(v => 
-          v.name.toLowerCase().includes("male") || 
-          v.name.toLowerCase().includes("daniel") || 
-          v.name.toLowerCase().includes("alex") ||
-          v.name.toLowerCase().includes("google uk english male")
-        );
-        if (maleVoice) utterance.voice = maleVoice;
-        utterance.pitch = 0.95;
+        if (youVoice) utterance.voice = youVoice;
+        utterance.pitch = 0.9;
         utterance.rate = 1.0;
       }
 
       utterance.onend = () => {
+        if (!isPlayingRef.current) return;
         index++;
-        speakNext();
+        timerRef.current = setTimeout(speakNext, 500);
       };
 
-      utterance.onerror = () => {
+      utterance.onerror = (event) => {
+        if (event.error === "interrupted" || event.error === "canceled") return;
+        console.error("SpeechSynthesis error:", event);
         setIsPlaying(false);
         setCurrentIndex(-1);
+        isPlayingRef.current = false;
       };
 
       window.speechSynthesis.speak(utterance);
