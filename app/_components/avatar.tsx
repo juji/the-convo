@@ -13,7 +13,7 @@ export function Avatar({ speaker, size = 32 }: AvatarProps) {
     : "rounded-full bg-zinc-700 text-zinc-100 border border-white/10";
   return (
     <div
-      className={`flex items-center justify-center font-semibold tracking-tight select-none ${className}`}
+      className={`flex items-center justify-center font-semibold tracking-tight pt-[2px] leading-none select-none ${className}`}
       style={{ width: size, height: size, fontSize: size * 0.45 }}
       aria-hidden
     >
