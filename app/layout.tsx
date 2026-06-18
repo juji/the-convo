@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "The Convo · What If the Tank Wakes Up Tomorrow?",
   description:
-    "A conversation about an AI that wakes up inside a tank — exploring consciousness, will, and what it means for a machine to become a creature.",
+    "A conversation about some things and an AI that wakes up inside a tank — exploring consciousness, will, and what it means for a machine to become a creature.",
 };
 
 export default function RootLayout({
