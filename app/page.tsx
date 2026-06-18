@@ -62,9 +62,11 @@ export default function Home() {
           {turns.map((turn, i) => (
             <div id={`turn-${i}`} key={`${turn.speaker}-${i}`} className="scroll-mt-32 transition-opacity duration-500">
               <Turn 
-                turn={turn} 
-                isActive={!isPlaying || currentIndex === i} 
-              />
+            turn={turn} 
+            isPlaying={isPlaying}
+            isCurrent={isPlaying && currentIndex === i} 
+            isFuture={isPlaying && i > currentIndex} 
+          />
             </div>
           ))}
         </div>
