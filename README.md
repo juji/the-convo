@@ -11,5 +11,5 @@ The title is the question underneath everything:
 The conversation uses a tank as a thought experiment. Not because tanks matter, but because a tank can move through the world. It can be interrupted. It can wait. It can remember what happened. It can have a direction. Once a machine starts occupying time like that, the old easy answers stop feeling so easy.
 
 
-
+https://the-convo.jujiplay.com/
 
