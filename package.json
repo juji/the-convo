@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "parse": "node scripts/parse-convo.mjs",
+    "convert": "node scripts/convert-to-html.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

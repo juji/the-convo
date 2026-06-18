@@ -1,7 +1,9 @@
-import convo from "./_data/convo.json";
+import convo from "./_data/convo-html.json";
 import { Turn } from "./_components/turn";
 
-type Turn = { speaker: "You" | "ChatGPT"; text: string };
+type Turn =
+  | { speaker: "You"; text: string }
+  | { speaker: "ChatGPT"; html: string };
 type Convo = { topic: string; turns: Turn[] };
 
 const { turns } = convo as Convo;

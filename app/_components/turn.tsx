@@ -1,31 +1,15 @@
-import { marked } from "marked";
-import DOMPurify from "isomorphic-dompurify";
 import { Avatar } from "./avatar";
 
-type Speaker = "You" | "ChatGPT";
-type TurnType = { speaker: Speaker; text: string };
-
-marked.setOptions({
-  gfm: true,
-  breaks: false,
-});
+type TurnType =
+  | { speaker: "You"; text: string }
+  | { speaker: "ChatGPT"; html: string };
 
 type TurnProps = {
   turn: TurnType;
 };
 
-function renderAssistantHtml(md: string): string {
-  const raw = marked.parse(md, { async: false }) as string;
-  return DOMPurify.sanitize(raw, {
-    USE_PROFILES: { html: true },
-  });
-}
-
 export function Turn({ turn }: TurnProps) {
-  const isAssistant = turn.speaker === "ChatGPT";
-
-  if (isAssistant) {
-    const html = renderAssistantHtml(turn.text);
+  if (turn.speaker === "ChatGPT") {
     return (
       <article className="flex gap-3 sm:gap-4">
         <div className="pt-1">
@@ -37,8 +21,8 @@ export function Turn({ turn }: TurnProps) {
           </div>
           <div
             className="prose-chat"
-            // sanitized above; content comes from the local convo.md
-            dangerouslySetInnerHTML={{ __html: html }}
+            // sanitized at build time; content comes from the local convo.md
+            dangerouslySetInnerHTML={{ __html: turn.html }}
           />
         </div>
       </article>
